@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Event Rent A/S – prototype og cloudarkitektur til eksamen i Cloud Computing">
+<title>Event Rent A/S | Cloudarkitektur & prototype</title>
+<style>
+:root{--bg:#091323;--panel:#101f34;--panel2:#152941;--line:#2b425b;--text:#eff6ff;--muted:#a7bad0;--cyan:#55d5e9;--green:#7de0a8;--amber:#f4c979}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif;line-height:1.55}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}.wrap{max-width:1160px;margin:auto;padding:0 24px}header{position:sticky;top:0;z-index:10;background:#091323ed;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.nav{display:flex;justify-content:space-between;align-items:center;min-height:74px;gap:20px}.logo{font-size:1.3rem;font-weight:800;letter-spacing:-.04em}.logo span{color:var(--cyan)}nav{display:flex;gap:22px;flex-wrap:wrap}nav a{color:var(--muted);font-size:.91rem}nav a:hover{color:white}.hero{padding:85px 0 60px;background:radial-gradient(ellipse at 85% 10%,#123f56 0%,transparent 50%)}.eyebrow{color:var(--cyan);font-weight:700;text-transform:uppercase;font-size:.77rem;letter-spacing:.15em}h1{font-size:clamp(2.3rem,5vw,4.7rem);letter-spacing:-.055em;line-height:1.08;margin:14px 0 22px;max-width:900px}h1 span{color:var(--cyan)}p.lead{font-size:1.12rem;color:var(--muted);max-width:740px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-block;background:var(--cyan);color:#06202c;padding:12px 20px;border-radius:10px;font-weight:750;border:1px solid var(--cyan)}.btn.alt{background:transparent;color:var(--text);border-color:#52718b}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:52px}.stat,.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:23px}.stat strong{display:block;font-size:1.65rem}.stat span{color:var(--muted);font-size:.87rem}section{padding:66px 0}h2{font-size:clamp(1.7rem,3vw,2.5rem);letter-spacing:-.035em;margin:0 0 12px}.sub{color:var(--muted);margin:0 0 28px;max-width:800px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card h3{margin:10px 0}.card p{color:var(--muted);margin-bottom:0}.icon{font-size:1.8rem}.pill{display:inline-block;border-radius:99px;padding:4px 10px;font-size:.73rem;font-weight:750;background:#174c40;color:#9bf0c7}.pill.future{background:#4a3821;color:#ffdb9b}.diagram{background:linear-gradient(160deg,#11263e,#0d1b2e);border:1px solid var(--line);border-radius:18px;padding:26px;overflow:auto}.diagram svg{display:block;width:100%;min-width:790px;height:auto}.legend{display:flex;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:.87rem;margin-top:18px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:var(--green)}.dot.future{background:var(--amber)}.tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}.tabs button{background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--muted);padding:10px 16px}.tabs button.active{background:#1b4857;color:white;border-color:var(--cyan)}.detail{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--panel);min-height:105px}.detail p{margin:6px 0 0;color:var(--muted)}.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}.check{padding-left:22px}.check li{margin:9px 0}.muted{color:var(--muted)}.notice{border-left:3px solid var(--cyan);padding:14px 20px;background:#11283b;border-radius:0 10px 10px 0}.flow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.step{background:var(--panel2);padding:13px 18px;border-radius:10px;border:1px solid var(--line);font-weight:650}.arrow{color:var(--cyan);font-size:1.4rem}footer{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:.85rem}@media(max-width:740px){.grid,.stats,.two{grid-template-columns:1fr}.nav{align-items:flex-start;flex-direction:column;padding:15px 0}nav{gap:13px}.hero{padding-top:55px}section{padding:46px 0}}
+
+/* ============================================================
+   BOOKING-DEMO: Formular, produktkort og prisoversigt
+   Alt foregår i browseren. Ingen persondata eller betaling sendes.
+   ============================================================ */
+.booking-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,1fr);gap:22px;align-items:start}
+.booking-form,.booking-summary{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px}
+.booking-summary{position:sticky;top:94px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.field label,.field>span{font-weight:650;font-size:.92rem}
+.field input,.field select{width:100%;background:#091a2c;color:var(--text);border:1px solid #4b647e;border-radius:10px;padding:12px;font:inherit;color-scheme:dark}
+.field input:focus,.field select:focus{outline:2px solid var(--cyan);outline-offset:1px}
+.equipment-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0 24px}
+.equipment{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:15px}
+.equipment label{display:flex;align-items:start;gap:9px;font-weight:700;cursor:pointer}
+.equipment input{accent-color:var(--cyan);width:18px;height:18px;flex:none;margin-top:3px}
+.equipment small{display:block;color:var(--muted);margin:6px 0 0 27px}
+.summary-line{display:flex;justify-content:space-between;gap:12px;margin:13px 0;color:var(--muted)}
+.summary-line strong{color:var(--text)}
+.summary-total{border-top:1px solid var(--line);padding-top:16px;font-size:1.2rem}
+.demo-note{background:#342a19;border:1px solid #8c6d32;color:#ffe0a2;padding:12px 14px;border-radius:10px;font-size:.88rem;margin:16px 0}
+.pay-button{width:100%;margin-top:12px}
+.receipt{margin-top:18px;background:#123b32;border:1px solid #398d72;border-radius:12px;padding:17px}
+.receipt h3{margin:0 0 8px;color:#a1f2cf}
+.receipt p{margin:6px 0;color:#e2f6ed}
+@media(max-width:850px){.booking-layout{grid-template-columns:1fr}.booking-summary{position:static}}
+@media(max-width:560px){.form-grid,.equipment-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a href="#top" class="logo">EVENT <span>RENT</span> <small style="font-size:.6em;color:var(--muted)">A/S</small></a><nav><a href="#booking">Book event</a><a href="#behov">Behov</a><a href="#arkitektur">Arkitektur</a><a href="#prototype">Prototype</a><a href="#sikkerhed">Sikkerhed</a><a href="#drift">Drift & økonomi</a></nav></div></header>
+<main id="top">
+<div class="hero"><div class="wrap"><div class="eyebrow">Cloud Computing · Eksamensprototype</div><h1>Fra lokal server til <span>moderne cloudløsning.</span></h1><p class="lead">Et realistisk forslag til Event Rent A/S: offentlig hjemmeside på Render, versionsstyring på GitHub og en fremtidig sikker platform til booking, kundedata og medarbejderadgang.</p><div class="actions"><a class="btn" href="#booking">Book udstyr</a><a class="btn alt" href="#arkitektur">Se netværksdiagram</a><a class="btn alt" href="#prototype">Hvad virker i prototypen?</a></div><div class="stats"><div class="stat"><strong>18</strong><span>Medarbejdere</span></div><div class="stat"><strong>PaaS</strong><span>Render som webhosting</span></div><div class="stat"><strong>GitHub → Render</strong><span>Automatisk deployment kan aktiveres</span></div></div></div></div>
+
+<!-- ============================================================
+     BOOKING OG BETALING: Interaktiv frontend-prototype
+     VIGTIGT: Ingen rigtig ordre eller betaling bliver gennemført.
+     ============================================================ -->
+<section id="booking">
+  <div class="wrap">
+    <div class="eyebrow">Interaktiv demo · Eventudlejning</div>
+    <h2>Planlæg dit næste event</h2>
+    <p class="sub">Vælg eventtype, lejeperiode og udstyr. Se prisen med det samme, og afprøv et simuleret betalingsflow.</p>
+    <div class="booking-layout">
+      <form class="booking-form" id="bookingForm">
+        <h3>1. Vælg event og periode</h3>
+        <div class="form-grid">
+          <div class="field"><label for="eventType">Type af event</label>
+            <select id="eventType" required>
+              <option value="konference">Konference</option>
+              <option value="festival">Festival</option>
+              <option value="messe">Messe</option>
+              <option value="privat">Privat arrangement</option>
+            </select>
+          </div>
+          <div class="field"><label for="guestCount">Antal gæster</label><input id="guestCount" type="number" min="1" max="10000" value="50" required></div>
+          <div class="field"><label for="startDate">Startdato</label><input id="startDate" type="date" required></div>
+          <div class="field"><label for="endDate">Slutdato (inklusive)</label><input id="endDate" type="date" required></div>
+        </div>
+        <h3>2. Vælg udstyr</h3>
+        <p class="muted">Priserne er fiktive demonstrationspriser pr. dag inkl. moms.</p>
+        <div class="equipment-grid">
+          <div class="equipment"><label><input type="checkbox" name="equipment" value="sound" checked> 🔊 Lydanlæg</label><small>750 kr. / dag</small></div>
+          <div class="equipment"><label><input type="checkbox" name="equipment" value="light"> 💡 Lysudstyr</label><small>500 kr. / dag</small></div>
+          <div class="equipment"><label><input type="checkbox" name="equipment" value="projector"> 📽️ Projektor og lærred</label><small>600 kr. / dag</small></div>
+          <div class="equipment"><label><input type="checkbox" name="equipment" value="chairs"> 🪑 Stole og borde (pakke)</label><small>400 kr. / dag</small></div>
+          <div class="equipment"><label><input type="checkbox" name="equipment" value="tent"> ⛺ Eventtelt</label><small>1.500 kr. / dag</small></div>
+          <div class="equipment"><label><input type="checkbox" name="equipment" value="stage"> 🎤 Mobil scene</label><small>1.200 kr. / dag</small></div>
+        </div>
+        <h3>3. Betalingsmetode (demo)</h3>
+        <div class="field"><label for="paymentMethod">Vælg en simuleret betalingsmetode</label>
+          <select id="paymentMethod"><option value="kort">Betalingskort (demo)</option><option value="mobilepay">MobilePay (demo)</option><option value="faktura">Faktura (demo)</option></select>
+        </div>
+        <p class="demo-note">⚠️ Demo: Indtast ikke kortoplysninger eller personfølsomme oplysninger. Der oprettes ingen rigtig reservation, og der trækkes ingen penge.</p>
+        <button type="submit" class="btn pay-button">Simulér booking og betaling</button>
+        <div id="bookingReceipt" aria-live="polite" hidden></div>
+      </form>
+      <aside class="booking-summary" aria-label="Prisoversigt">
+        <span class="pill">Live prisberegning</span>
+        <h3>Din bookingoversigt</h3>
+        <div class="summary-line"><span>Event</span><strong id="summaryEvent">Konference</strong></div>
+        <div class="summary-line"><span>Lejeperiode</span><strong id="summaryDays">Vælg datoer</strong></div>
+        <div class="summary-line"><span>Gæster</span><strong id="summaryGuests">50</strong></div>
+        <div id="summaryItems"></div>
+        <div class="summary-line summary-total"><span>Samlet pris</span><strong id="summaryTotal">—</strong></div>
+        <p class="muted" style="font-size:.84rem">Priser er illustrative og inkluderer moms. Ingen betaling eller booking gemmes på en server.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="behov"><div class="wrap"><div class="eyebrow">A · Analyse og krav</div><h2>Hvad har Event Rent brug for?</h2><p class="sub">Den ældre lokale server giver udfordringer med drift, adgang udefra og sæsonbestemt belastning. Løsningen prioriterer enkel drift og tydelig sikkerhed.</p><div class="grid"><div class="card"><div class="icon">🌐</div><h3>Offentlig adgang</h3><p>En hjemmeside til udstyr og bookingforespørgsler, tilgængelig over HTTPS.</p></div><div class="card"><div class="icon">🔐</div><h3>Beskyttelse af data</h3><p>Kundedata holdes adskilt fra webfiler og sikres med adgangskontrol og kryptering.</p></div><div class="card"><div class="icon">📈</div><h3>Fleksibel drift</h3><p>Mulighed for at udvide kapaciteten ved messer og festivalsæson.</p></div><div class="card"><div class="icon">🧑‍💻</div><h3>Adgang udefra</h3><p>Medarbejdere kan på sigt få sikker adgang med identitet, roller og MFA.</p></div><div class="card"><div class="icon">💾</div><h3>Backup og gendannelse</h3><p>Databasebackup, gendannelsestest og plan for nedbrud.</p></div><div class="card"><div class="icon">💰</div><h3>Realistisk økonomi</h3><p>Start enkelt med statisk hosting; betal først for database og avanceret drift, når der er behov.</p></div></div></div></section>
+<section id="arkitektur"><div class="wrap"><div class="eyebrow">B · Arkitekturdesign</div><h2>Netværks- og cloudarkitektur</h2><p class="sub">Grønne elementer indgår i den planlagte statiske prototype. Gule elementer er fremtidigt produktionsdesign og er ikke implementeret af denne HTML-fil.</p>
+<div class="diagram"><svg viewBox="0 0 1040 635" role="img" aria-label="Arkitekturdiagram: udvikler bruger Git og GitHub, som deployer til Render static site. Kunder tilgår Render via HTTPS. Fremtidige komponenter: booking API, database, objektlager, backup, medarbejderidentitet og lokal Ubuntu Docker VM.">
+<defs><marker id="arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#85b6c8"/></marker></defs>
+<rect x="12" y="12" width="1016" height="290" rx="18" fill="#102e3a" stroke="#3d9b9e" stroke-dasharray="7 6"/><text x="30" y="39" fill="#9debe6" font-size="16" font-weight="700">PROTOTYPE · STATISK HJEMMESIDE</text>
+<rect x="36" y="75" width="192" height="100" rx="13" fill="#183a4a" stroke="#7de0a8" stroke-width="2"/><text x="132" y="113" text-anchor="middle" fill="white" font-size="18" font-weight="bold">Udvikler</text><text x="132" y="139" text-anchor="middle" fill="#c1d7e5" font-size="14">Git · index.html</text>
+<rect x="308" y="75" width="192" height="100" rx="13" fill="#183a4a" stroke="#7de0a8" stroke-width="2"/><text x="404" y="113" text-anchor="middle" fill="white" font-size="18" font-weight="bold">GitHub</text><text x="404" y="139" text-anchor="middle" fill="#c1d7e5" font-size="14">Repository</text>
+<rect x="585" y="75" width="207" height="100" rx="13" fill="#183a4a" stroke="#7de0a8" stroke-width="2"/><text x="688" y="113" text-anchor="middle" fill="white" font-size="18" font-weight="bold">Render</text><text x="688" y="139" text-anchor="middle" fill="#c1d7e5" font-size="14">Static Site · PaaS</text>
+<rect x="834" y="75" width="168" height="100" rx="13" fill="#183a4a" stroke="#7de0a8" stroke-width="2"/><text x="918" y="113" text-anchor="middle" fill="white" font-size="18" font-weight="bold">Kunder</text><text x="918" y="139" text-anchor="middle" fill="#c1d7e5" font-size="14">Webbrowser</text>
+<path d="M228 125 H308 M500 125 H585 M834 125 H792" fill="none" stroke="#85b6c8" stroke-width="2.5" marker-end="url(#arr)"/><text x="269" y="110" text-anchor="middle" fill="#d5e8f1" font-size="12">push</text><text x="542" y="110" text-anchor="middle" fill="#d5e8f1" font-size="12">deploy</text><text x="814" y="110" text-anchor="middle" fill="#d5e8f1" font-size="12">HTTPS</text>
+<text x="38" y="224" fill="#c2d8e7" font-size="14">DNS: eventrent.example → Render-domæne (illustrativt)</text><text x="38" y="250" fill="#c2d8e7" font-size="14">Browser → HTTPS/TCP 443 → statiske HTML/CSS/JS-filer</text><text x="38" y="276" fill="#8edcb1" font-size="13">Booking- og betalingsdemo findes i browseren; ingen rigtig ordre eller betaling gennemføres.</text>
+<rect x="12" y="322" width="1016" height="297" rx="18" fill="#2d281f" stroke="#c7a05d" stroke-dasharray="7 6"/><text x="30" y="350" fill="#f4c979" font-size="16" font-weight="700">FREMTIDIG PRODUKTION · FORESLÅET, IKKE IMPLEMENTERET</text>
+<rect x="36" y="386" width="192" height="88" rx="13" fill="#39352d" stroke="#f4c979"/><text x="132" y="419" text-anchor="middle" fill="white" font-size="16" font-weight="bold">Medarbejdere</text><text x="132" y="442" text-anchor="middle" fill="#e8d8bb" font-size="13">MFA · Roller</text>
+<rect x="308" y="386" width="192" height="88" rx="13" fill="#39352d" stroke="#f4c979"/><text x="404" y="419" text-anchor="middle" fill="white" font-size="16" font-weight="bold">Booking-API</text><text x="404" y="442" text-anchor="middle" fill="#e8d8bb" font-size="13">PaaS / container</text>
+<rect x="585" y="386" width="207" height="88" rx="13" fill="#39352d" stroke="#f4c979"/><text x="688" y="419" text-anchor="middle" fill="white" font-size="16" font-weight="bold">Database</text><text x="688" y="442" text-anchor="middle" fill="#e8d8bb" font-size="13">Administreret PostgreSQL</text>
+<rect x="834" y="386" width="168" height="88" rx="13" fill="#39352d" stroke="#f4c979"/><text x="918" y="419" text-anchor="middle" fill="white" font-size="16" font-weight="bold">Backup</text><text x="918" y="442" text-anchor="middle" fill="#e8d8bb" font-size="13">Separat lager</text>
+<path d="M228 430 H308 M500 430 H585 M792 430 H834" fill="none" stroke="#bfa77c" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="308" y="511" width="192" height="75" rx="12" fill="#39352d" stroke="#f4c979"/><text x="404" y="540" text-anchor="middle" fill="white" font-size="15" font-weight="bold">Ubuntu VM + Docker</text><text x="404" y="560" text-anchor="middle" fill="#e8d8bb" font-size="12">Valgfrit testmiljø</text>
+<rect x="585" y="511" width="207" height="75" rx="12" fill="#39352d" stroke="#f4c979"/><text x="688" y="540" text-anchor="middle" fill="white" font-size="15" font-weight="bold">Object Storage</text><text x="688" y="560" text-anchor="middle" fill="#e8d8bb" font-size="12">Billeder og uploads</text>
+<path d="M404 511 V474 M688 511 V474" fill="none" stroke="#bfa77c" stroke-width="2" stroke-dasharray="5 5"/>
+</svg></div><div class="legend"><span><i class="dot"></i>Prototype / demonstrationsflow</span><span><i class="dot future"></i>Fremtidigt produktionsdesign</span></div><p class="muted" style="font-size:.86rem">Bemærk: Diagrammet viser et planlagt GitHub → Render-flow. Før deployment er det en arkitekturbeskrivelse; det bliver først en verificeret implementering, når du har publiceret og testet siden.</p></div></section>
+<section id="prototype"><div class="wrap"><div class="eyebrow">C · Praktisk produkt</div><h2>Hvad demonstrerer prototypen?</h2><div class="two"><div class="card"><span class="pill">Implementeret i denne fil</span><h3>Statisk webprototype</h3><ul class="check"><li>Responsiv HTML/CSS-hjemmeside</li><li>Interaktiv gennemgang af arkitekturen</li><li>Bookingformular, prisberegning og simuleret betaling (kun frontend)</li><li>Illustration af netværk, DNS, HTTPS og datalag</li><li>Kan versionsstyres med Git og hostes på Render</li></ul></div><div class="card"><span class="pill future">Ikke implementeret</span><h3>Produktionsfunktioner</h3><ul class="check"><li>Ægte booking, lagerkontrol og betalingsintegration</li><li>Kunde- og ordredatabase</li><li>Medarbejderlogin og MFA</li><li>Automatisk backup og gendannelse</li><li>Docker-baseret backend</li></ul></div></div><h3 style="margin-top:32px">Deployment-flow</h3><div class="flow"><span class="step">index.html</span><span class="arrow">→</span><span class="step">Git commit + push</span><span class="arrow">→</span><span class="step">GitHub</span><span class="arrow">→</span><span class="step">Render Static Site</span><span class="arrow">→</span><span class="step">HTTPS</span></div><p class="muted">Render kan automatisk deploye nye commits fra den valgte GitHub-branch, når automatisk deployment er aktiveret.</p></div></section>
+<section id="teknik"><div class="wrap"><div class="eyebrow">Interaktiv forklaring</div><h2>Vælg en komponent</h2><div class="tabs" role="group" aria-label="Komponenter"><button class="active" data-key="github">GitHub</button><button data-key="render">Render</button><button data-key="net">Netværk</button><button data-key="db">Database</button><button data-key="docker">Docker / VM</button></div><div class="detail" id="detail" aria-live="polite"><strong>GitHub · Versionsstyring</strong><p>Opbevarer projektets kildekode og historik. Ved push til den valgte branch kan Render starte en ny deployment. GitHub er ikke en produktionsdatabase.</p></div></div></section>
+<section id="sikkerhed"><div class="wrap"><div class="eyebrow">D · Sikkerhed og data</div><h2>Ansvar og dataplacering</h2><div class="grid"><div class="card"><h3>Adgangskontrol</h3><p>Medarbejderkonti med MFA og mindst mulige rettigheder. Ingen hemmelige nøgler i GitHub-repositoriet.</p></div><div class="card"><h3>Kryptering</h3><p>HTTPS/TLS ved adgang til websiden. Produktionsdatabase skal beskyttes med kryptering under transport og lagring.</p></div><div class="card"><h3>EU/EØS og GDPR</h3><p>Vælg egnede datacentre, undersøg underdatabehandlere, overførsler og databehandleraftaler. Gratis hosting garanterer ikke kravene.</p></div></div></div></section>
+<section id="drift"><div class="wrap"><div class="eyebrow">D · Drift, økonomi og alternativer</div><h2>Hvorfor denne løsning?</h2><div class="two"><div class="card"><h3>Valgt: GitHub + Render (PaaS)</h3><p>Enkel deployment og mindre serveradministration. God til en statisk prototype og kan senere udvides med en backend og administreret database. Faktiske priser og regionsmuligheder skal kontrolleres før produktion.</p></div><div class="card"><h3>Alternativ: Ubuntu VM + Docker (IaaS/lokalt)</h3><p>Mere kontrol over operativsystem og containere, men Event Rent skal selv håndtere flere opdateringer, sikkerhed, overvågning og backup. Kan bruges som lærings- og testmiljø.</p></div><div class="card"><h3>Tilgængelighed</h3><p>Brug overvågning og en dokumenteret fejlprocedure. Ved bookinglancering skal oppetid, kapacitet og gendannelsestid fastlægges.</p></div><div class="card"><h3>Backup og genetablering</h3><p>Fremtidig database kræver automatiske backups, separat opbevaring og test af gendannelse. GitHub alene er ikke backup af kunde- og ordredata.</p></div></div><p class="notice"><strong>Eksamensnote:</strong> Den fungerende leverance er denne statiske side med en booking- og betalingssimulation i JavaScript. Arkitekturdiagrammets booking-API, database, identitetsløsning, Docker og backup er forslag — ikke funktioner, som siden påstår at have.</p></div></section>
+</main><footer><div class="wrap">Event Rent A/S · Cloud Computing · Eksamensprototype · HTML/CSS/JavaScript · GitHub + Render</div></footer>
+<script>
+const details={github:['GitHub · Versionsstyring','Opbevarer projektets kildekode og historik. Ved push til den valgte branch kan Render starte en ny deployment. GitHub er ikke en produktionsdatabase.'],render:['Render · PaaS-hosting','Render kan publicere denne statiske hjemmeside over HTTPS. Hostingplatformen håndterer webhosting, mens Event Rent stadig har ansvar for kode, indhold og eventuelle persondata.'],net:['Netværk · IP, DNS og porte','DNS peger domænenavnet mod hostingplatformen. Brugere besøger hjemmesiden via HTTPS på TCP-port 443. En fremtidig database bør ikke være offentligt tilgængelig.'],db:['Database · Fremtidig løsning','En administreret PostgreSQL-database kan lagre kunder og ordrer med adgangsbegrænsning, backup og kontrolleret dataplacering. Ingen database er tilsluttet prototypen.'],docker:['Ubuntu VM + Docker · Alternativ','En Ubuntu-VM kan køre en Nginx-container som alternativ prototype eller testmiljø. Det demonstrerer virtualisering og containerisering, men er ikke nødvendig for denne statiske Render-side.']};
+for(const btn of document.querySelectorAll('.tabs button'))btn.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const [title,description]=details[btn.dataset.key];const target=document.getElementById('detail');target.replaceChildren();const strong=document.createElement('strong');strong.textContent=title;const p=document.createElement('p');p.textContent=description;target.append(strong,p)});
+
+/* ============================================================
+   BOOKING: Data og prisberegning
+   Priserne er fiktive. De skal senere komme fra en sikker backend.
+   ============================================================ */
+const equipmentPrices = {
+  sound: { name: "Lydanlæg", price: 750 },
+  light: { name: "Lysudstyr", price: 500 },
+  projector: { name: "Projektor og lærred", price: 600 },
+  chairs: { name: "Stole og borde", price: 400 },
+  tent: { name: "Eventtelt", price: 1500 },
+  stage: { name: "Mobil scene", price: 1200 }
+};
+
+const eventNames = {
+  konference: "Konference", festival: "Festival",
+  messe: "Messe", privat: "Privat arrangement"
+};
+
+// Formater priser som danske kroner.
+const money = (amount) => new Intl.NumberFormat("da-DK", {
+  style: "currency", currency: "DKK", maximumFractionDigits: 0
+}).format(amount);
+
+// Datoer behandles som kalenderdage i UTC for at undgå sommertidsfejl.
+function dateNumber(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return NaN;
+  const [year, month, day] = value.split("-").map(Number);
+  const timestamp = Date.UTC(year, month - 1, day);
+  const date = new Date(timestamp);
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return NaN;
+  return timestamp;
+}
+
+// Beregn antallet af lejedage inklusive første og sidste dag.
+function getRentalDays() {
+  const start = dateNumber(document.getElementById("startDate").value);
+  const end = dateNumber(document.getElementById("endDate").value);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return 0;
+  return Math.floor((end - start) / 86400000) + 1;
+}
+
+// Find de valgte udstyrstyper og deres priser.
+function getSelectedEquipment() {
+  return [...document.querySelectorAll('input[name="equipment"]:checked')]
+    .map(input => equipmentPrices[input.value]);
+}
+
+// Opdater prisoversigten, hver gang brugeren ændrer formularen.
+function updateBookingSummary() {
+  const days = getRentalDays();
+  const items = getSelectedEquipment();
+  const guests = document.getElementById("guestCount").value;
+  const event = document.getElementById("eventType").value;
+
+  document.getElementById("summaryEvent").textContent = eventNames[event];
+  document.getElementById("summaryGuests").textContent = guests || "—";
+  document.getElementById("summaryDays").textContent = days ? `${days} dag(e)` : "Vælg gyldige datoer";
+
+  const itemContainer = document.getElementById("summaryItems");
+  itemContainer.replaceChildren();
+  for (const item of items) {
+    const line = document.createElement("div");
+    line.className = "summary-line";
+    const name = document.createElement("span");
+    name.textContent = item.name;
+    const price = document.createElement("strong");
+    price.textContent = money(item.price * days);
+    line.append(name, price);
+    itemContainer.append(line);
+  }
+  const total = items.reduce((sum, item) => sum + item.price * days, 0);
+  document.getElementById("summaryTotal").textContent = days && items.length ? money(total) : "—";
+  return { days, items, total };
+}
+
+const bookingForm = document.getElementById("bookingForm");
+bookingForm.addEventListener("input", () => {
+  updateBookingSummary();
+  document.getElementById("bookingReceipt").hidden = true;
+});
+bookingForm.addEventListener("change", () => {
+  updateBookingSummary();
+  document.getElementById("bookingReceipt").hidden = true;
+});
+
+// Vis kun en DEMO-kvittering. Ingen netværkskald, database eller betaling.
+bookingForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const { days, items, total } = updateBookingSummary();
+  const start = document.getElementById("startDate").value;
+  const end = document.getElementById("endDate").value;
+  const today = new Date();
+  const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  if (!days || start < todayString || !items.length || !total) {
+    alert("Vælg en gyldig fremtidig lejeperiode og mindst ét stykke udstyr.");
+    return;
+  }
+  const method = document.getElementById("paymentMethod").selectedOptions[0].textContent;
+  const receipt = document.getElementById("bookingReceipt");
+  receipt.replaceChildren();
+  receipt.className = "receipt";
+  const title = document.createElement("h3");
+  title.textContent = "✓ Bookingdemo gennemført";
+  const description = document.createElement("p");
+  description.textContent = `${eventNames[document.getElementById("eventType").value]} · ${start} til ${end} · ${money(total)}`;
+  const note = document.createElement("p");
+  note.textContent = `Valgt metode: ${method}. Dette er kun en simulation. Ingen penge er trukket, og ingen reservation er oprettet.`;
+  receipt.append(title, description, note);
+  receipt.hidden = false;
+});
+
+// Første visning: sæt datoerne til i dag og opdater oversigten.
+const today = new Date();
+const todayLocal = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+document.getElementById("startDate").min = todayLocal;
+document.getElementById("endDate").min = todayLocal;
+document.getElementById("startDate").value = todayLocal;
+document.getElementById("endDate").value = todayLocal;
+updateBookingSummary();
+</script>
+</body></html>
